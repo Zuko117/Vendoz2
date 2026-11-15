@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendoz E-com — Générateur IA de Fiches Produits SEO & Conversion</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- ==================== TOP NAVBAR ==================== -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+            <!-- Logo & Plan Badge -->
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-violet-600 flex items-center justify-center text-white shadow-sm shadow-brand-500/20">
+                    <i data-lucide="sparkles" class="w-5 h-5"></i>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-lg tracking-tight text-slate-900">Vendoz <span class="text-brand-600">E-com</span></span>
+                    <span id="planBadge" class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                        Plan Gratuit
+                    </span>
+                </div>
+            </div>
+
+            <!-- Right Actions: History, Credits, Upgrade -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- History Drawer Button -->
+                <button onclick="toggleHistoryDrawer()" class="relative inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors" title="Historique de session">
+                    <i data-lucide="history" class="w-4 h-4"></i>
+                    <span class="hidden md:inline">Historique</span>
+                    <span id="historyCountBadge" class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold rounded-full bg-slate-200 text-slate-700">0</span>
+                </button>
+
+                <!-- Dynamic Credits Pill -->
+                <div id="creditsContainer" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-800 text-xs sm:text-sm font-medium">
+                    <i data-lucide="zap" class="w-4 h-4 text-amber-500 fill-amber-500"></i>
+                    <span id="creditsText">3 crédits gratuits</span>
+                </div>
+
+                <!-- Upgrade CTA Button -->
+                <button id="upgradeNavBtn" onclick="openPricingModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-brand-600 to-violet-600 hover:from-brand-700 hover:to-violet-700 shadow-sm shadow-brand-600/20 transition-all active:scale-95">
+                    <i data-lucide="crown" class="w-4 h-4"></i>
+                    <span>Passer Pro <span class="hidden sm:inline">(19€/mois)</span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN WORKSPACE (2 COLUMNS) ==================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+            
+            <!-- LEFT COLUMN: PRODUCT CONFIGURATION FORM (5 cols on lg) -->
+            <section class="lg:col-span-5 bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 sm:p-6">
+                <div class="flex items-center justify-between gap-2 pb-4 mb-5 border-b border-slate-100">
+                    <div>
+                        <h1 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="sliders-horizontal" class="w-4 h-4 text-brand-600"></i>
+                            Paramètres du produit
+                        </h1>
+                        <p class="text-xs text-slate-500 mt-0.5">Renseignez les infos brutes de votre fournisseur.</p>
+                    </div>
+                    <button type="button" onclick="fillExampleData()" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200/60 transition-colors shrink-0">
+                        <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
+                        Remplir un exemple
+                    </button>
+                </div>
+
+                <form id="productForm" onsubmit="handleGenerate(event)" class="space-y-4">
+                    <!-- Product Name -->
+                    <div>
+                        <label for="productName" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                            Nom du produit <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text" id="productName" required placeholder="Ex: Gourde Isotherme SmartTemp 750ml"
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition-all">
+                    </div>
+
+                    <!-- Category / Niche -->
+                    <div>
+                        <label for="productCategory" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                            Catégorie / Niche
+                        </label>
+                        <div class="relative">
+                            <select id="productCategory" class="w-full appearance-none px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition-all">
+                                <option value="Sport & Fitness">🏋️ Sport & Fitness</option>
+                                <option value="Maison & Déco">🏠 Maison & Déco</option>
+                                <option value="Beauté & Bien-être">✨ Beauté & Bien-être</option>
+                                <option value="Tech & Gadgets">⚡ Tech & Gadgets</option>
+                                <option value="Mode & Accessoires">👜 Mode & Accessoires</option>
+                                <option value="Animaux">🐾 Animaux</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        </div>
+                    </div>
+
+                    <!-- Key Features -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="productFeatures" class="block text-xs font-semibold uppercase tracking-wider text-slate-600">
+                                3 à 5 caractéristiques clés <span class="text-rose-500">*</span>
+                            </label>
+                            <span class="text-[11px] text-slate-400">Séparées par des virgules</span>
+                        </div>
+                        <textarea id="productFeatures" rows="3" required placeholder="Ex: Acier inoxydable double paroi, écran LED tactile température, garde au froid 24h et au chaud 12h, sans BPA, bouchon anti-fuite"
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition-all resize-none"></textarea>
+                    </div>
+
+                    <!-- Target Audience -->
+                    <div>
+                        <label for="targetAudience" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                            Public cible <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text" id="targetAudience" required placeholder="Ex: Sportifs urbains, randonneurs et travailleurs nomades"
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition-all">
+                    </div>
+
+                    <!-- Tone & Language Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <!-- Tone -->
+                        <div>
+                            <label for="toneSelect" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                                Ton rédactionnel
+                            </label>
+                            <div class="relative">
+                                <select id="toneSelect" class="w-full appearance-none px-3 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition-all">
+                                    <option value="Persuasif & Dynamique">🔥 Persuasif & Dynamique</option>
+                                    <option value="Luxe & Raffiné">💎 Luxe & Raffiné</option>
+                                    <option value="Amical & Décontracté">😊 Amical & Décontracté</option>
+                                    <option value="Technique & Rassurant">🛡️ Technique & Rassurant</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            </div>
+                        </div>
+
+                        <!-- Output Language -->
+                        <div>
+                            <label for="langSelect" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                                Langue de sortie
+                            </label>
+                            <div class="relative">
+                                <select id="langSelect" class="w-full appearance-none px-3 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 transition-all">
+                                    <option value="Français">🇫🇷 Français</option>
+                                    <option value="Anglais">🇬🇧 Anglais (English)</option>
+                                    <option value="Espagnol">🇪🇸 Espagnol (Español)</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Primary Generate CTA -->
+                    <div class="pt-2">
+                        <button type="submit" id="generateBtn" class="w-full py-3.5 px-5 rounded-xl font-semibold text-sm text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:ring-brand-500/30 shadow-md shadow-brand-600/20 flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            <span>Générer la fiche produit ✨</span>
+                        </button>
+                        <p class="text-[11px] text-center text-slate-400 mt-2.5 flex items-center justify-center gap-1">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
+                            100% unique, sans contenu dupliqué, prêt pour Shopify & WooCommerce
+                        </p>
+                    </div>
+                </form>
+            </section>
+
+            <!-- RIGHT COLUMN: OUTPUT & RESULTS AREA (7 cols on lg) -->
+            <section class="lg:col-span-7">
+                
+                <!-- 1. EMPTY STATE -->
+                <div id="emptyState" class="bg-white rounded-2xl border border-dashed border-slate-300 p-8 sm:p-12 text-center flex flex-col items-center justify-center min-h-[520px]">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-600 mb-5">
+                        <i data-lucide="file-text" class="w-8 h-8"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-900">Votre fiche produit haute conversion apparaîtra ici</h2>
+                    <p class="text-sm text-slate-500 max-w-md mt-2 leading-relaxed">
+                        Transformez une simple description fournisseur en une page de vente optimisée pour convaincre vos visiteurs et grimper sur Google.
+                    </p>
+
+                    <!-- Feature Preview Pills -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg mt-8 text-left">
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-start gap-3">
+                            <div class="p-2 rounded-lg bg-white shadow-xs text-brand-600">
+                                <i data-lucide="heading-1" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">Titre H1 & Accroche</p>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Capte l'attention dès les 3 premières secondes.</p>
+                            </div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-start gap-3">
+                            <div class="p-2 rounded-lg bg-white shadow-xs text-violet-600">
+                                <i data-lucide="align-left" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">Copywriting Bénéfices</p>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Structure persuasive orientée désirs clients.</p>
+                            </div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-start gap-3">
+                            <div class="p-2 rounded-lg bg-white shadow-xs text-emerald-600">
+                                <i data-lucide="list-checks" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">5 Puces Haute Conversion</p>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Lecture rapide sur mobile avec émojis ciblés.</p>
+                            </div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-start gap-3">
+                            <div class="p-2 rounded-lg bg-white shadow-xs text-amber-600">
+                                <i data-lucide="search" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">Pack SEO Complet</p>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Title, Méta-description calibrée & Mots-clés.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="fillExampleData()" class="mt-7 inline-flex items-center gap-2 text-xs font-semibold text-brand-600 hover:text-brand-700">
+                        <span>Tester avec un produit d'exemple</span>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+
+                <!-- 2. LOADING STATE -->
+                <div id="loadingState" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-8 sm:p-12 text-center flex flex-col items-center justify-center min-h-[520px]">
+                    <div class="relative w-16 h-16 mb-6">
+                        <div class="absolute inset-0 rounded-2xl bg-brand-600/20 animate-ping"></div>
+                        <div class="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-600 to-violet-600 flex items-center justify-center text-white shadow-lg">
+                            <i data-lucide="sparkles" class="w-8 h-8 animate-spin"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900">Rédaction de votre fiche produit par l'IA...</h3>
+                    <p id="loadingStepText" class="text-sm text-brand-600 font-medium mt-2 animate-pulse-subtle">
+                        Analyse des bénéfices clients et des déclencheurs psychologiques...
+                    </p>
+                    <div class="w-full max-w-xs bg-slate-100 h-2 rounded-full overflow-hidden mt-6">
+                        <div id="loadingProgressBar" class="bg-gradient-to-r from-brand-600 to-violet-600 h-full rounded-full transition-all duration-500" style="width: 25%"></div>
+                    </div>
+                </div>
+
+                <!-- 3. GENERATED RESULTS CONTAINER -->
+                <div id="resultsContainer" class="hidden space-y-5">
+                    
+                    <!-- Top Action Bar -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600">
+                                <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                            </span>
+                            <div>
+                                <h2 class="text-sm font-bold text-slate-900">Fiche produit générée avec succès</h2>
+                                <p id="resultMetaSubtitle" class="text-xs text-slate-500">Ton : Persuasif • Langue : Français</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button onclick="copyAllFormat('markdown', this)" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">
+                                <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
+                                <span>Copier Markdown</span>
+                            </button>
+                            <button onclick="copyAllFormat('html', this)" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 transition-colors">
+                                <i data-lucide="code-2" class="w-3.5 h-3.5"></i>
+                                <span>Tout copier (HTML)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 1: H1 Title & Emotional Hook -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-md bg-brand-100 text-brand-700 text-xs font-bold flex items-center justify-center">1</span>
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Titre H1 & Accroche Émotionnelle</h3>
+                            </div>
+                            <button onclick="copySection('titleHook', this)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 transition-colors">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span>Copier</span>
+                            </button>
+                        </div>
+                        <div class="p-5 space-y-3">
+                            <h4 id="resTitleH1" class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug"></h4>
+                            <p id="resHook" class="text-sm text-brand-700 bg-brand-50/60 border-l-4 border-brand-500 px-3.5 py-2.5 rounded-r-xl font-medium leading-relaxed"></p>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Persuasive Description -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-md bg-violet-100 text-violet-700 text-xs font-bold flex items-center justify-center">2</span>
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Description Persuasive Orientée Bénéfices</h3>
+                            </div>
+                            <button onclick="copySection('description', this)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 transition-colors">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span>Copier</span>
+                            </button>
+                        </div>
+                        <div id="resDescription" class="p-5 space-y-3 text-sm text-slate-700 leading-relaxed">
+                            <!-- Paragraphs injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Card 3: 5 High-Conversion Bullet Points -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center justify-center">3</span>
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">5 Puces Haute Conversion (Bullet Points)</h3>
+                            </div>
+                            <button onclick="copySection('bullets', this)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 transition-colors">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span>Copier</span>
+                            </button>
+                        </div>
+                        <ul id="resBullets" class="p-5 space-y-2.5 text-sm text-slate-700">
+                            <!-- Bullets injected dynamically -->
+                        </ul>
+                    </div>
+
+                    <!-- Card 4: SEO Pack -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-md bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center">4</span>
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Pack Optimisation SEO (Google)</h3>
+                            </div>
+                            <button onclick="copySection('seo', this)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 transition-colors">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span>Copier le Pack SEO</span>
+                            </button>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <!-- Google SERP Preview Box -->
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                                <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">Aperçu Google SERP</span>
+                                <p class="text-xs text-emerald-700 truncate">https://votre-boutique.fr › produits › fiche-optimisee</p>
+                                <p id="serpTitlePreview" class="text-base font-medium text-blue-700 hover:underline cursor-pointer mt-0.5 line-clamp-1"></p>
+                                <p id="serpDescPreview" class="text-xs text-slate-600 mt-1 line-clamp-2"></p>
+                            </div>
+
+                            <!-- SEO Title -->
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-semibold text-slate-700">Balise Title SEO</span>
+                                    <span id="seoTitleCounter" class="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">0 / 60 car.</span>
+                                </div>
+                                <div id="resSeoTitle" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium text-slate-800"></div>
+                            </div>
+
+                            <!-- SEO Meta Description -->
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-semibold text-slate-700">Méta-Description</span>
+                                    <span id="seoDescCounter" class="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">0 / 160 car.</span>
+                                </div>
+                                <div id="resSeoDesc" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-700"></div>
+                            </div>
+
+                            <!-- Suggested Keywords -->
+                            <div>
+                                <span class="text-xs font-semibold text-slate-700 block mb-2">Mots-clés cibles suggérés</span>
+                                <div id="resSeoKeywords" class="flex flex-wrap gap-2">
+                                    <!-- Keyword tags injected dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- ==================== HISTORY SLIDE-OVER DRAWER ==================== -->
+    <div id="historyBackdrop" onclick="toggleHistoryDrawer()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 hidden transition-opacity"></div>
+    <aside id="historyDrawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl border-l border-slate-200 z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-5 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center">
+                    <i data-lucide="history" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-bold text-slate-900">Historique de session</h2>
+                    <p class="text-xs text-slate-500">Retrouvez vos fiches générées en un clic</p>
+                </div>
+            </div>
+            <button onclick="toggleHistoryDrawer()" class="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <div id="historyList" class="flex-1 overflow-y-auto p-5 space-y-3">
+            <div class="text-center py-12 text-slate-400">
+                <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>
+                <p class="text-sm font-medium text-slate-600">Aucune fiche générée pour l'instant</p>
+                <p class="text-xs mt-1">Vos créations apparaîtront automatiquement ici.</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ==================== PRICING / UPGRADE MODAL ==================== -->
+    <div id="pricingModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-3xl w-full shadow-2xl border border-slate-200 overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-200">
+            <!-- Modal Header -->
+            <div class="relative bg-gradient-to-br from-slate-900 via-brand-900 to-violet-950 p-6 sm:p-8 text-white text-center">
+                <button onclick="closePricingModal()" class="absolute top-4 right-4 p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <span id="modalAlertTag" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-400/20 text-amber-200 border border-amber-400/30 mb-3">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    Passez à la vitesse supérieure
+                </span>
+                <h2 id="pricingModalTitle" class="text-2xl sm:text-3xl font-extrabold tracking-tight">Débloquez tout le potentiel de Vendoz E-com</h2>
+                <p id="pricingModalSubtitle" class="text-sm text-slate-300 max-w-lg mx-auto mt-2">
+                    Ne perdez plus de ventes avec des fiches fournisseurs génériques. Rentabilisez votre abonnement dès votre première vente.
+                </p>
+            </div>
+
+            <!-- Pricing Cards Grid -->
+            <div class="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50">
+                <!-- Starter Plan -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between shadow-xs">
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-slate-900">Starter</h3>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">Idéal lancement</span>
+                        </div>
+                        <div class="mt-4 flex items-baseline gap-1">
+                            <span class="text-4xl font-extrabold text-slate-900">19€</span>
+                            <span class="text-sm text-slate-500">/ mois</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">Sans engagement, annulable en 1 clic.</p>
+
+                        <ul class="mt-6 space-y-3 text-sm text-slate-700">
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+                                <span><strong>50 fiches produits</strong> optimisées / mois</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+                                <span>Pack SEO complet (Title & Méta)</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+                                <span>Export HTML & Markdown en 1 clic</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+                                <span>Support par email sous 24h</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button onclick="activatePlan('Starter (19€/mois)', 50)" class="mt-6 w-full py-3 px-4 rounded-xl text-sm font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200 transition-all">
+                        Simuler l'activation Starter
+                    </button>
+                </div>
+
+                <!-- Pro Plan (Highlighted) -->
+                <div class="bg-white rounded-2xl border-2 border-brand-600 p-6 flex flex-col justify-between shadow-lg relative">
+                    <div class="absolute -top-3.5 right-6 px-3 py-0.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-brand-600 to-violet-600 shadow-xs">
+                        LE PLUS POPULAIRE
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-bold text-slate-900">Pro Illimité</h3>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-700">Boutiques actives</span>
+                        </div>
+                        <div class="mt-4 flex items-baseline gap-1">
+                            <span class="text-4xl font-extrabold text-slate-900">39€</span>
+                            <span class="text-sm text-slate-500">/ mois</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">Pour scaler votre catalogue sans limite.</p>
+
+                        <ul class="mt-6 space-y-3 text-sm text-slate-700">
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-brand-600 shrink-0"></i>
+                                <span><strong>Fiches produits ILLIMITÉES</strong></span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-brand-600 shrink-0"></i>
+                                <span>Génération multilingue (FR, EN, ES)</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-brand-600 shrink-0"></i>
+                                <span>Tous les tons de marque (Luxe, Tech...)</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i data-lucide="check" class="w-4 h-4 text-brand-600 shrink-0"></i>
+                                <span>Accès prioritaire aux nouveaux modèles IA</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button onclick="activatePlan('Pro Illimité', Infinity)" class="mt-6 w-full py-3 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-brand-600 to-violet-600 hover:from-brand-700 hover:to-violet-700 shadow-md shadow-brand-600/20 transition-all">
+                        Simuler l'activation Pro ✨
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2.5 text-sm font-medium">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+            <span id="toastMessage">Action effectuée !</span>
+        </div>
+    </div>
+
+    <!-- ==================== APPLICATION LOGIC & GEMINI AI SDK ==================== -->
+    <script>
+        // --- STATE MANAGEMENT ---
+        const appState = {
+            credits: 3,
+            planName: 'Plan Gratuit',
+            isUnlimited: false,
+            currentResult: null,
+            history: []
+        };
+
+        const apiKey = ""; // Fourni automatiquement par l'environnement Canvas à l'exécution
+
+        // Initialize Lucide icons on load
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            updateCreditsUI();
+        });
+
+        // --- EXAMPLE DATA FILLER ---
+        const sampleProducts = [
+            {
+                name: "Gourde Isotherme SmartTemp 750ml",
+                category: "Sport & Fitness",
+                features: "Acier inoxydable 316 double paroi, écran LED tactile affichant la température en temps réel, garde au froid 24h et au chaud 12h, 100% étanche sans BPA, filtre à thé intégré",
+                audience: "Sportifs urbains, randonneurs et travailleurs nomades soucieux de leur hydratation",
+                tone: "Persuasif & Dynamique",
+                lang: "Français"
+            },
+            {
+                name: "Lampe de Bureau Architecte HaloLED Pro",
+                category: "Maison & Déco",
+                features: "Bras articulé ultra-flexible en aluminium brossé, 5 températures de couleur réglables, variateur tactile sans scintillement (protection oculaire), port USB-C de charge rapide intégré",
+                audience: "Télétravailleurs, designers, étudiants et créateurs de contenu",
+                tone: "Technique & Rassurant",
+                lang: "Français"
+            },
+            {
+                name: "Sérum Éclat Intense Vitamine C Pure 15% & Acide Hyaluronique",
+                category: "Beauté & Bien-être",
+                features: "Formule bio à 99% d'origine naturelle, flacon en verre ambré anti-UV, absorption immédiate sans fini gras, réduit les taches pigmentaires et repulpe la peau dès 14 jours",
+                audience: "Femmes et hommes de 25 à 50 ans cherchant un teint lumineux et anti-âge naturel",
+                tone: "Luxe & Raffiné",
+                lang: "Français"
+            }
+        ];
+        let sampleIndex = 0;
+
+        function fillExampleData() {
+            const sample = sampleProducts[sampleIndex % sampleProducts.length];
+            sampleIndex++;
+
+            document.getElementById('productName').value = sample.name;
+            document.getElementById('productCategory').value = sample.category;
+            document.getElementById('productFeatures').value = sample.features;
+            document.getElementById('targetAudience').value = sample.audience;
+            document.getElementById('toneSelect').value = sample.tone;
+            document.getElementById('langSelect').value = sample.lang;
+
+            showToast("Exemple chargé ! Cliquez sur « Générer la fiche produit ».");
+        }
+
+        // --- CREDITS & PLAN MANAGEMENT ---
+        function updateCreditsUI() {
+            const creditsText = document.getElementById('creditsText');
+            const creditsContainer = document.getElementById('creditsContainer');
+            const planBadge = document.getElementById('planBadge');
+            const upgradeNavBtn = document.getElementById('upgradeNavBtn');
+
+            planBadge.textContent = appState.planName;
+
+            if (appState.isUnlimited) {
+                creditsText.textContent = "Générations illimitées";
+                creditsContainer.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm font-semibold";
+                planBadge.className = "hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-100 text-brand-800 border border-brand-200";
+                upgradeNavBtn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>Membre Pro</span>`;
+                upgradeNavBtn.className = "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 cursor-default";
+                upgradeNavBtn.onclick = null;
+            } else {
+                const label = appState.credits > 1 ? `${appState.credits} crédits restants` : `${appState.credits} crédit restant`;
+                creditsText.textContent = label;
+                if (appState.credits === 0) {
+                    creditsContainer.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm font-semibold";
+                }
+            }
+            lucide.createIcons();
+        }
+
+        function openPricingModal(outOfCredits = false) {
+            const modal = document.getElementById('pricingModal');
+            const tag = document.getElementById('modalAlertTag');
+            const title = document.getElementById('pricingModalTitle');
+            const subtitle = document.getElementById('pricingModalSubtitle');
+
+            if (outOfCredits) {
+                tag.innerHTML = `<i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Vos 3 générations gratuites sont épuisées`;
+                title.textContent = "Continuez à créer des fiches qui vendent";
+                subtitle.textContent = "Vous avez utilisé tous vos crédits d'essai gratuit. Choisissez un forfait pour débloquer immédiatement de nouvelles générations.";
+            } else {
+                tag.innerHTML = `<i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Passez à la vitesse supérieure`;
+                title.textContent = "Débloquez tout le potentiel de Vendoz E-com";
+                subtitle.textContent = "Ne perdez plus de ventes avec des fiches fournisseurs génériques. Rentabilisez votre abonnement dès votre première vente.";
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closePricingModal() {
+            const modal = document.getElementById('pricingModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function activatePlan(planName, creditsAmount) {
+            appState.planName = planName;
+            if (creditsAmount === Infinity) {
+                appState.isUnlimited = true;
+            } else {
+                appState.isUnlimited = false;
+                appState.credits += creditsAmount;
+            }
+            updateCreditsUI();
+            closePricingModal();
+            showToast(`🎉 Félicitations ! ${planName} activé avec succès.`);
+        }
+
+        // --- GEMINI AI GENERATION WITH STRUCTURED JSON & FALLBACK ---
+        async function handleGenerate(event) {
+            event.preventDefault();
+
+            // Check credits gate (SaaS Monetization Simulation)
+            if (!appState.isUnlimited && appState.credits <= 0) {
+                openPricingModal(true);
+                return;
+            }
+
+            const productName = document.getElementById('productName').value.trim();
+            const category = document.getElementById('productCategory').value;
+            const features = document.getElementById('productFeatures').value.trim();
+            const audience = document.getElementById('targetAudience').value.trim();
+            const tone = document.getElementById('toneSelect').value;
+            const language = document.getElementById('langSelect').value;
+
+            if (!productName || !features || !audience) {
+                showToast("Veuillez remplir tous les champs obligatoires.");
+                return;
+            }
+
+            // UI Loading Transition
+            setLoadingState(true);
+
+            try {
+                const generatedData = await callGeminiProductCopyAPI({
+                    productName,
+                    category,
+                    features,
+                    audience,
+                    tone,
+                    language
+                });
+
+                // Deduct credit if not unlimited
+                if (!appState.isUnlimited) {
+                    appState.credits = Math.max(0, appState.credits - 1);
+                    updateCreditsUI();
+                }
+
+                // Store & Render
+                const record = {
+                    id: Date.now(),
+                    timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                    input: { productName, category, features, audience, tone, language },
+                    output: generatedData
+                };
+
+                appState.currentResult = record;
+                appState.history.unshift(record);
+                updateHistoryDrawer();
+                renderResult(record);
+
+            } catch (error) {
+                // Intelligent fallback if API call fails or offline
+                const fallbackData = generateIntelligentFallback({
+                    productName,
+                    category,
+                    features,
+                    audience,
+                    tone,
+                    language
+                });
+
+                if (!appState.isUnlimited) {
+                    appState.credits = Math.max(0, appState.credits - 1);
+                    updateCreditsUI();
+                }
+
+                const record = {
+                    id: Date.now(),
+                    timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+                    input: { productName, category, features, audience, tone, language },
+                    output: fallbackData
+                };
+
+                appState.currentResult = record;
+                appState.history.unshift(record);
+                updateHistoryDrawer();
+                renderResult(record);
+            } finally {
+                setLoadingState(false);
+            }
+        }
+
+        async function callGeminiProductCopyAPI(params) {
+            const systemInstruction = `Tu es un copywriter e-commerce d'élite et expert SEO (spécialisé Shopify, WooCommerce et Amazon). 
+Ta mission est de transformer des caractéristiques produits brutes en une fiche produit irrésistible qui maximise le taux de conversion et le référencement naturel Google.
+Règles strictes :
+- Rédige impérativement dans la langue demandée : ${params.language}.
+- Adopte exactement le ton demandé : ${params.tone}.
+- Transforme chaque caractéristique technique en bénéfice émotionnel et concret pour le client cible.
+- Dans les paragraphes de description, mets en valeur les mots/expressions clés importants en les entourant de doubles astérisques **comme ceci**.
+- La balise Title SEO doit faire maximum 60 caractères.
+- La Méta-description SEO doit faire entre 130 et 158 caractères et inciter au clic.`;
+
+            const userPrompt = `Génère une fiche produit e-commerce complète pour :
+- Nom du produit : ${params.productName}
+- Catégorie : ${params.category}
+- Caractéristiques clés : ${params.features}
+- Public cible : ${params.audience}
+- Ton : ${params.tone}
+- Langue de rédaction : ${params.language}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            titleH1: { type: "STRING", description: "Titre produit H1 accrocheur orienté bénéfice" },
+                            emotionalHook: { type: "STRING", description: "Phrase d'accroche émotionnelle percutante de 2 lignes max" },
+                            descriptionParagraphs: {
+                                type: "ARRAY",
+                                items: { type: "STRING" },
+                                description: "3 paragraphes persuasifs structurés (Problème/Solution, Bénéfices au quotidien, Réassurance/Appel à l'action) avec mots clés en **gras**"
+                            },
+                            bulletPoints: {
+                                type: "ARRAY",
+                                items: { type: "STRING" },
+                                description: "Exactement 5 puces haute conversion commençant chacune par un émoji pertinent suivi d'un bénéfice fort"
+                            },
+                            seoTitle: { type: "STRING", description: "Balise Title SEO optimisée (max 60 caractères)" },
+                            seoMetaDescription: { type: "STRING", description: "Méta-description Google persuasive (max 160 caractères)" },
+                            seoKeywords: {
+                                type: "ARRAY",
+                                items: { type: "STRING" },
+                                description: "6 mots-clés ou expressions longue traîne pertinents"
+                            }
+                        },
+                        required: ["titleH1", "emotionalHook", "descriptionParagraphs", "bulletPoints", "seoTitle", "seoMetaDescription", "seoKeywords"]
+                    }
+                }
+            };
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            // Exponential backoff retry wrapper
+            const delays = [1000, 2000, 4000];
+            for (let attempt = 0; attempt <= delays.length; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                    const result = await response.json();
+                    const rawText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (!rawText) throw new Error("Empty AI response");
+
+                    return JSON.parse(rawText);
+                } catch (err) {
+                    if (attempt === delays.length) throw err;
+                    await new Promise(res => setTimeout(res, delays[attempt]));
+                }
+            }
+        }
+
+        // Intelligent fallback generator (guarantees 100% functional demo even without network)
+        function generateIntelligentFallback(params) {
+            const featList = params.features.split(',').map(f => f.trim()).filter(Boolean);
+            const f1 = featList[0] || "conception premium haute durabilité";
+            const f2 = featList[1] || "ergonomie pensée pour le quotidien";
+            const f3 = featList[2] || "performance optimale garantie";
+
+            return {
+                titleH1: `${params.productName} — L'alliance parfaite entre performance et confort au quotidien`,
+                emotionalHook: `Conçu spécialement pour les ${params.audience.toLowerCase()}, ${params.productName} transforme votre routine grâce à son ${f1.toLowerCase()}.`,
+                descriptionParagraphs: [
+                    `Vous en avez assez des produits ordinaires qui vous lâchent au pire moment ? Découvrez **${params.productName}**, la solution nouvelle génération dans l'univers **${params.category}** pensée pour répondre aux exigences des **${params.audience.toLowerCase()}**.`,
+                    `Grâce à son **${f1.toLowerCase()}** et son **${f2.toLowerCase()}**, chaque utilisation devient plus fluide, plus rapide et infiniment plus agréable. Fini les compromis entre esthétique et efficacité : nous avons réuni le meilleur de l'innovation pour simplifier votre quotidien.`,
+                    `Adopté par des centaines de clients exigeants, **${params.productName}** s'impose comme un indispensable durable. **Commandez le vôtre dès aujourd'hui** et profitez d'une expérience supérieure dès la première utilisation.`
+                ],
+                bulletPoints: [
+                    `✨ Qualité Supérieure : Profitez d'un ${f1.toLowerCase()} conçu pour durer année après année.`,
+                    `⚡ Efficacité Immédiate : Bénéficiez d'un ${f2.toLowerCase()} qui vous fait gagner un temps précieux.`,
+                    `🎯 Pensé Pour Vous : Idéalement adapté aux besoins spécifiques des ${params.audience.toLowerCase()}.`,
+                    `🛡️ Fiabilité Totale : Intègre ${f3.toLowerCase()} pour une tranquillité d'esprit absolue.`,
+                    `🚀 Prêt à l'Emploi : Design ergonomique et prise en main intuitive dès l'ouverture du coffret.`
+                ],
+                seoTitle: `${params.productName} | Meilleur Choix ${params.category}`.slice(0, 60),
+                seoMetaDescription: `Découvrez ${params.productName} : ${f1}, ${f2}. L'équipement idéal pour ${params.audience.toLowerCase()}. Livraison rapide & garantie satisfaction !`.slice(0, 158),
+                seoKeywords: [
+                    params.productName.toLowerCase(),
+                    `acheter ${params.productName.toLowerCase()}`,
+                    params.category.toLowerCase(),
+                    f1.toLowerCase(),
+                    `meilleur ${params.productName.split(' ')[0].toLowerCase()}`
+                ]
+            };
+        }
+
+        // --- LOADING ANIMATION CONTROLLER ---
+        let loadingInterval = null;
+        function setLoadingState(isLoading) {
+            const emptyState = document.getElementById('emptyState');
+            const loadingState = document.getElementById('loadingState');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const generateBtn = document.getElementById('generateBtn');
+            const stepText = document.getElementById('loadingStepText');
+            const progressBar = document.getElementById('loadingProgressBar');
+
+            if (isLoading) {
+                emptyState.classList.add('hidden');
+                resultsContainer.classList.add('hidden');
+                loadingState.classList.remove('hidden');
+                generateBtn.disabled = true;
+                generateBtn.classList.add('opacity-70', 'cursor-not-allowed');
+
+                const steps = [
+                    { text: "Analyse des bénéfices clients et du public cible...", pct: "30%" },
+                    { text: "Rédaction d'une accroche persuasive haute conversion...", pct: "60%" },
+                    { text: "Calibration des balises SEO Google (Title & Méta)...", pct: "88%" }
+                ];
+                let idx = 0;
+                progressBar.style.width = "15%";
+                loadingInterval = setInterval(() => {
+                    if (idx < steps.length) {
+                        stepText.textContent = steps[idx].text;
+                        progressBar.style.width = steps[idx].pct;
+                        idx++;
+                    }
+                }, 900);
+            } else {
+                clearInterval(loadingInterval);
+                loadingState.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                generateBtn.disabled = false;
+                generateBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
+        }
+
+        // --- RENDER RESULTS ---
+        function renderResult(record) {
+            const { input, output } = record;
+
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.remove('hidden');
+
+            document.getElementById('resultMetaSubtitle').textContent = `Produit : ${input.productName} • Ton : ${input.tone} • ${input.language}`;
+
+            // 1. Title & Hook
+            document.getElementById('resTitleH1').textContent = output.titleH1;
+            document.getElementById('resHook').textContent = output.emotionalHook;
+
+            // 2. Description (parse **bold** safely)
+            const descEl = document.getElementById('resDescription');
+            descEl.innerHTML = output.descriptionParagraphs.map(p => {
+                const safeHtml = escapeHtml(p).replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-slate-900">$1</strong>');
+                return `<p>${safeHtml}</p>`;
+            }).join('');
+
+            // 3. Bullets
+            const bulletsEl = document.getElementById('resBullets');
+            bulletsEl.innerHTML = output.bulletPoints.map(b => {
+                const safeBullet = escapeHtml(b).replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-slate-900">$1</strong>');
+                return `<li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50/80 border border-slate-100">
+                    <span>${safeBullet}</span>
+                </li>`;
+            }).join('');
+
+            // 4. SEO Pack
+            document.getElementById('resSeoTitle').textContent = output.seoTitle;
+            document.getElementById('serpTitlePreview').textContent = output.seoTitle;
+            const titleLen = output.seoTitle.length;
+            const titleCounter = document.getElementById('seoTitleCounter');
+            titleCounter.textContent = `${titleLen} / 60 car.`;
+            titleCounter.className = titleLen <= 60
+                ? "text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700"
+                : "text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700";
+
+            document.getElementById('resSeoDesc').textContent = output.seoMetaDescription;
+            document.getElementById('serpDescPreview').textContent = output.seoMetaDescription;
+            const descLen = output.seoMetaDescription.length;
+            const descCounter = document.getElementById('seoDescCounter');
+            descCounter.textContent = `${descLen} / 160 car.`;
+            descCounter.className = descLen <= 160
+                ? "text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700"
+                : "text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700";
+
+            const kwContainer = document.getElementById('resSeoKeywords');
+            kwContainer.innerHTML = output.seoKeywords.map(kw =>
+                `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-brand-50 text-brand-700 border border-brand-100">
+                    #${escapeHtml(kw)}
+                </span>`
+            ).join('');
+
+            lucide.createIcons();
+        }
+
+        // --- HISTORY DRAWER LOGIC ---
+        function toggleHistoryDrawer() {
+            const drawer = document.getElementById('historyDrawer');
+            const backdrop = document.getElementById('historyBackdrop');
+            const isClosed = drawer.classList.contains('translate-x-full');
+
+            if (isClosed) {
+                backdrop.classList.remove('hidden');
+                drawer.classList.remove('translate-x-full');
+            } else {
+                drawer.classList.add('translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        function updateHistoryDrawer() {
+            document.getElementById('historyCountBadge').textContent = appState.history.length;
+            const listEl = document.getElementById('historyList');
+
+            if (appState.history.length === 0) return;
+
+            listEl.innerHTML = appState.history.map(item => `
+                <button onclick="loadFromHistory(${item.id})" class="w-full text-left p-4 rounded-2xl border border-slate-200 hover:border-brand-400 hover:bg-brand-50/30 transition-all group">
+                    <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+                        <span class="font-medium text-brand-600">${escapeHtml(item.input.category)}</span>
+                        <span>${item.timestamp}</span>
+                    </div>
+                    <p class="text-sm font-bold text-slate-900 group-hover:text-brand-700 line-clamp-1">${escapeHtml(item.input.productName)}</p>
+                    <p class="text-xs text-slate-500 mt-1 line-clamp-2">${escapeHtml(item.output.titleH1)}</p>
+                </button>
+            `).join('');
+        }
+
+        function loadFromHistory(id) {
+            const found = appState.history.find(item => item.id === id);
+            if (found) {
+                appState.currentResult = found;
+                renderResult(found);
+                toggleHistoryDrawer();
+                showToast("Fiche restaurée depuis l'historique.");
+            }
+        }
+
+        // --- CLIPBOARD COPY HELPERS (Using execCommand fallback for iFrame compatibility) ---
+        function copyTextToClipboard(text, btnElement) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                if (btnElement) {
+                    const originalHtml = btnElement.innerHTML;
+                    btnElement.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500"></i><span class="text-emerald-600 font-semibold">Copié !</span>`;
+                    lucide.createIcons();
+                    setTimeout(() => {
+                        btnElement.innerHTML = originalHtml;
+                        lucide.createIcons();
+                    }, 1800);
+                }
+                showToast("Contenu copié dans le presse-papiers !");
+            } catch (err) {
+                showToast("Impossible de copier automatiquement.");
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        function copySection(sectionKey, btn) {
+            if (!appState.currentResult) return;
+            const out = appState.currentResult.output;
+            let textToCopy = "";
+
+            if (sectionKey === 'titleHook') {
+                textToCopy = `${out.titleH1}\n\n${out.emotionalHook}`;
+            } else if (sectionKey === 'description') {
+                textToCopy = out.descriptionParagraphs.map(p => p.replace(/\*\*/g, '')).join('\n\n');
+            } else if (sectionKey === 'bullets') {
+                textToCopy = out.bulletPoints.map(b => b.replace(/\*\*/g, '')).join('\n');
+            } else if (sectionKey === 'seo') {
+                textToCopy = `Title SEO : ${out.seoTitle}\nMéta-description : ${out.seoMetaDescription}\nMots-clés : ${out.seoKeywords.join(', ')}`;
+            }
+
+            copyTextToClipboard(textToCopy, btn);
+        }
+
+        function copyAllFormat(format, btn) {
+            if (!appState.currentResult) return;
+            const out = appState.currentResult.output;
+            let formatted = "";
+
+            if (format === 'markdown') {
+                formatted = `# ${out.titleH1}\n\n> ${out.emotionalHook}\n\n${out.descriptionParagraphs.join('\n\n')}\n\n## Points clés\n${out.bulletPoints.map(b => `- ${b}`).join('\n')}\n\n---\n**SEO Title :** ${out.seoTitle}\n**Méta-Description :** ${out.seoMetaDescription}\n**Mots-clés :** ${out.seoKeywords.join(', ')}`;
+            } else {
+                const descHtml = out.descriptionParagraphs
+                    .map(p => `  <p>${p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`)
+                    .join('\n');
+                const bulletsHtml = out.bulletPoints
+                    .map(b => `  <li>${b.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</li>`)
+                    .join('\n');
+                formatted = `<h1>${out.titleH1}</h1>\n<p><em>${out.emotionalHook}</em></p>\n${descHtml}\n<ul>\n${bulletsHtml}\n</ul>\n<!-- SEO Title: ${out.seoTitle} -->\n<!-- Meta Description: ${out.seoMetaDescription} -->`;
+            }
+
+            copyTextToClipboard(formatted, btn);
+        }
+
+        // --- UTILS ---
+        let toastTimeout = null;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toastMessage');
+            msgEl.textContent = message;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
